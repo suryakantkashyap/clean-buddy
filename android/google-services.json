@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "759305947119",
+    "project_id": "clean-buddy-7d637",
+    "storage_bucket": "clean-buddy-7d637.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:759305947119:android:7cedebfa4020d5deced81a",
+        "android_client_info": {
+          "package_name": "com.myloginapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBv7q9UwPKdNw0wiGXg7BnYTXtkw9OjGRc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
