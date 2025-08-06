@@ -14,7 +14,7 @@ const OrderStack = () => {
         options={{
           headerTransparent: true,
           headerBlurEffect: 'regular',
-          title: 'hello',
+          title: 'Orders',
         }}
       />
     </Stack.Navigator>

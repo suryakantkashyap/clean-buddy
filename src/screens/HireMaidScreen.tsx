@@ -22,35 +22,35 @@ interface Maid {
 const maids: Maid[] = [
   {
     id: '1',
-    name: 'Deep Floor Cleaning',
-    price: '600 Rs',
+    name: 'Rekha Sharma',
+    price: 300,
     available: true,
-    image: require('../assets/HomeCleaningImage/floorcleaning.png'),
+    image: require('../assets/maid1.jpg'),
   },
   {
     id: '2',
-    name: 'Ceiling Cleaning',
-    price: '300 Rs',
-    available: true,
-    image: require('../assets/HomeCleaningImage/ceilingcleaning.png'),
+    name: 'Sunita Verma',
+    price: 400,
+    available: false,
+    image: require('../assets/maid2.png'),
   },
   {
     id: '3',
-    name: 'Furniture Cleaning',
-    price: '500 Rs',
+    name: 'Kiran Devi',
+    price: 250,
     available: true,
-    image: require('../assets/HomeCleaningImage/furnitureCleaning.png'),
+    image: require('../assets/maid3.png'),
   },
   {
     id: '4',
-    name: 'Complete cleaning',
-    price: '1000 Rs',
-    available: true,
-    image: require('../assets/HomeCleaningImage/completeCleaning.png'),
+    name: 'Geeta Kumari',
+    price: 350,
+    available: false,
+    image: require('../assets/maid4.jpg'),
   },
 ];
 
-const Homecleaning = () => {
+const HireMaid = () => {
   const insets = useSafeAreaInsets();
 
   const renderItem = ({ item }: { item: Maid }) => (
@@ -72,7 +72,9 @@ const Homecleaning = () => {
   );
 
   return (
-    <ImageBackground source={require('/Users/piyush/Projects/clean-buddy/src/assets/backgroundappimage/gradient1.png')} style={styles.container}>
+   
+    <ImageBackground source={require('/Users/piyush/Projects/clean-buddy/src/assets/backgroundappimage/gradient1.png')}style={styles.container}>
+       
       <AppHeader
         title="Home Cleaning"
         leftIcon={require('../assets/back.png')}
@@ -86,7 +88,9 @@ const Homecleaning = () => {
           paddingBottom: 20,
         }}
       />
+       
     </ImageBackground>
+   
   );
 };
 
@@ -146,4 +150,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Homecleaning;
+export default HireMaid;

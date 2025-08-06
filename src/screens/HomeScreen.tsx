@@ -16,7 +16,6 @@ import {
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { NavigationProps } from '../types';
-import PullScreenAnimation from '../components/PullScreenAnimation';
 import {
   colors,
   HomeCategories,
@@ -103,10 +102,30 @@ function HomeScreen() {
       case 0:
       case 2:
         return null;
+
       case 1:
         return <View>{renderSearchBar()}</View>;
       default:
         return null;
+    }
+  };
+
+  const handleCategoriesNavigation = (index: number) => {
+    switch (index) {
+      case 0:
+        navigation.navigate('Homecleaning');
+        break;
+      case 1:
+        navigation.navigate('HireMaid');
+        break;
+      case 2:
+        navigation.navigate('ToiletCleaning');
+        break;
+      case 3:
+        navigation.navigate('Massage');
+        break;
+      default:
+        break;
     }
   };
 
@@ -132,7 +151,7 @@ function HomeScreen() {
             {categories.map((item, index) => {
               return (
                 <TouchableOpacity
-                  onPress={() => navigation.navigate('Homecleaning')}
+                  onPress={() => handleCategoriesNavigation(index)}
                   style={styles.button}
                 >
                   <Text style={[styles.buttonTxt]}>{item.name}</Text>
@@ -168,6 +187,7 @@ function HomeScreen() {
   };
 
   return (
+    
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <SectionList
         sections={DATA}
@@ -178,6 +198,7 @@ function HomeScreen() {
         stickySectionHeadersEnabled
       />
     </SafeAreaView>
+   
   );
 }
 

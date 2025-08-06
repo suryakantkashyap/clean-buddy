@@ -1,16 +1,15 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import {
-  StyleSheet,
-  StatusBar,
-  SafeAreaView,
-} from 'react-native';
+import { StyleSheet, StatusBar, SafeAreaView } from 'react-native';
 import LoginScreen from '../screens/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import HomeScreen from '../screens/HomeScreen';
 import Homecleaning from '../screens/Homecleaning';
 import { RootStackParamList } from '../types';
-import { createNavigationContainerRef, NavigationContainer } from '@react-navigation/native';
+import {
+  createNavigationContainerRef,
+  NavigationContainer,
+} from '@react-navigation/native';
 import LocationScreen from '../screens/LocationScreen';
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 import { BottomTabNavigator } from './bottomTab';
@@ -27,7 +26,7 @@ const AppStack = () => {
         barStyle="dark-content"
       />
       <Stack.Navigator initialRouteName="AuthLoading">
-         <Stack.Screen
+        <Stack.Screen
           name="AuthLoading"
           component={AuthLoadingScreen}
           options={{ headerShown: false }}
@@ -40,18 +39,22 @@ const AppStack = () => {
         <Stack.Screen
           name="SignUp"
           component={SignUpScreen}
-          options={{ title: 'Create Account' }}
+          options={{
+            title: 'Create Account',
+            headerBackTitle: 'back',
+            headerShown: false,
+          }}
         />
-         <Stack.Screen
+        <Stack.Screen
           name="LocationScreen"
           component={LocationScreen}
           options={{
             headerShown: false,
-             presentation: 'modal',
+            presentation: 'modal',
           }}
         />
 
-         <Stack.Screen
+        <Stack.Screen
           name="BottomTab"
           component={BottomTabNavigator}
           options={{
@@ -61,6 +64,6 @@ const AppStack = () => {
       </Stack.Navigator>
     </NavigationContainer>
   );
-}
+};
 
- export default AppStack;
+export default AppStack;

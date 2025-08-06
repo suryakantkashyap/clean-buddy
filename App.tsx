@@ -11,6 +11,10 @@ import {
   PermissionsAndroid,
   SafeAreaView,
 } from 'react-native';
+import DropdownAlert, {
+  DropdownAlertData,
+  DropdownAlertType,
+} from 'react-native-dropdownalert';
 import messaging from '@react-native-firebase/messaging';
 import LoginScreen from './src/screens/LoginScreen';
 import SignUpScreen from './src/screens/SignUpScreen';
@@ -20,6 +24,7 @@ import { RootStackParamList } from './src/types';
 import AppStack from './src/navigation';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
+export let alert = (_data: DropdownAlertData) => new Promise<DropdownAlertData>(res => res);
 
 const loginHeader = () => (
   <View>
@@ -61,6 +66,7 @@ export default function App() {
         barStyle="dark-content"
       />
       <AppStack />
+      <DropdownAlert alert={func => (alert = func)} />
     </View>
   );
 }

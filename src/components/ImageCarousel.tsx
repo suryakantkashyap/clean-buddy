@@ -11,10 +11,10 @@ import {
 const { width } = Dimensions.get('window');
 
 const images = [
-  'https://picsum.photos/id/1015/600/300',
-  'https://picsum.photos/id/1020/600/300',
-  'https://picsum.photos/id/1025/600/300',
-  'https://picsum.photos/id/1035/600/300',
+  require('../assets/imagecourselimage/cleanbuddycoursel.png'),
+  require('../assets/imagecourselimage/Offcleanbuddy.png'),
+  require('../assets/imagecourselimage/imagecoursel.png'),
+  require('../assets/imagecourselimage/CleaningCrew.jpeg'),
 ];
 
 const ImageCarousel = () => {
@@ -48,7 +48,7 @@ const ImageCarousel = () => {
         style={{ borderRadius: 10 }}
       >
         {images.map((uri, index) => (
-          <Image key={index} source={{ uri }} style={styles.image} />
+          <Image key={index} source={uri} style={styles.image} />
         ))}
       </ScrollView>
 

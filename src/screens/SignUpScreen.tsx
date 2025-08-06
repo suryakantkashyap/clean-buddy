@@ -7,99 +7,182 @@ import {
   StyleSheet,
   Image,
   Alert,
-  StatusBar,
   ActivityIndicator,
 } from 'react-native';
-import { getAuth, createUserWithEmailAndPassword } from '@react-native-firebase/auth';
-import { useNavigation } from '@react-navigation/native';
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+} from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
-function SignUpScreen({navigation}) {
-  // const navigation = useNavigation();
+import { colors } from '../utility/constants';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { alert } from '../../App';
+import { DropdownAlertType } from 'react-native-dropdownalert';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
+function SignUpScreen({ navigation }) {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
 
-  const validateEmail = (email) => {
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState({ email: '', password: '' });
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const validateEmail = email => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
+  const [ispasswordVisible, setPasswordVisible] = useState(false);
 
   const handleSignUp = async () => {
-    if (!validateEmail(email) || password.length < 6) {
-      Alert.alert('Invalid Input', 'Enter a valid email and password (min 6 characters).');
+    let emailError = '';
+    let passwordError = '';
+
+    if (!validateEmail(email)) {
+      emailError = 'Invalid email format';
+    }
+    if (password.length < 6) {
+      passwordError = 'Password must be at least 6 characters';
+    }
+
+    if (emailError || passwordError) {
+      setError({ email: emailError, password: passwordError });
       return;
     }
 
-    setLoading(true);
+    setIsLoading(true);
+    setError({ email: '', password: '' }); // clear errors before retry
+
     try {
-      await createUserWithEmailAndPassword(getAuth(), email, password);
-      Alert.alert('Account Created', 'You can now log in with your credentials');
-      navigation.replace('Login');
+      const userCredential = await createUserWithEmailAndPassword(
+        getAuth(),
+        email,
+        password,
+      );
+      const uid = userCredential.user.uid;
+      const name = `${firstName.trim()} ${lastName.trim()}`;
+      await firestore().collection('users').doc(uid).set({
+        email,
+        name,
+        createdAt: firestore.FieldValue.serverTimestamp(),
+      });
+
+      alert({
+        type: DropdownAlertType.Success,
+        title: 'Success!',
+        message:
+          'Account created successfully. Now login with your credentials',
+      });
+      navigation.goBack();
     } catch (error) {
-      console.log('Signup Error:', error.message);
-      Alert.alert('Signup Failed', error.message);
+      await alert({
+        type: DropdownAlertType.Error,
+        title: 'Error',
+        message: error.message,
+      });
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <>
-      <StatusBar barStyle="dark-content" backgroundColor="#fbf5f5ff" />
+    <KeyboardAwareScrollView
+      contentContainerStyle={styles.mainContainer}
+      keyboardShouldPersistTaps="handled"
+      enableOnAndroid={true}
+      style={styles.mainContainer}
+    >
       <View style={styles.container}>
         <Image
           source={require('../assets/cleanbuddy.png')}
-          style={styles.logo}
+          style={styles.Image2}
         />
 
         <TextInput
-          placeholder="Enter your EMAIL"
+          placeholder="Enter your first name"
+          placeholderTextColor="#999999"
+          value={firstName}
+          onChangeText={setFirstName}
+          autoCapitalize="none"
+          style={error.email ? styles.errorInput : styles.input}
+        />
+        <TextInput
+          placeholder="Enter your last name"
+          placeholderTextColor="#999999"
+          value={lastName}
+          onChangeText={setLastName}
+          autoCapitalize="none"
+          style={error.email ? styles.errorInput : styles.input}
+        />
+        <TextInput
+          placeholder="Enter your email"
           placeholderTextColor="#999999"
           keyboardType="email-address"
-          autoCapitalize="none"
           value={email}
           onChangeText={setEmail}
-          style={styles.input}
-        />
-
-        <TextInput
-          placeholder="Create PASSWORD"
-          placeholderTextColor="#999999"
-          secureTextEntry
           autoCapitalize="none"
-          value={password}
-          onChangeText={setPassword}
-          style={styles.input}
+          style={error.email ? styles.errorInput : styles.input}
         />
+        <View style={styles.passwordContainer}>
+          <TextInput
+            placeholder="Enter your password"
+            placeholderTextColor="#999999"
+            secureTextEntry={ispasswordVisible}
+            value={password}
+            onChangeText={setPassword}
+            style={[ { flex: 1 }]}
+          />
+          <TouchableOpacity
+            onPress={() => setPasswordVisible(!ispasswordVisible)}
+            style={styles.eyeIcon}
+          >
+            <Icon
+              name={ispasswordVisible ? 'eye-off' : 'eye'}
+              size={24}
+              color="#555"
+            />
+          </TouchableOpacity>
+        </View>
 
-        <TouchableOpacity
-          onPress={handleSignUp}
-          style={styles.signupButton}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.signupButtonText}>Sign Up</Text>
-          )}
+        <TouchableOpacity onPress={handleSignUp} style={styles.loginButton}>
+          <Text style={styles.loginButtonText}>Sign Up</Text>
+          {isLoading && <ActivityIndicator size={'small'} color={'white'} />}
         </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.loginLink}>Already have an account? Login</Text>
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', marginTop: 20 }}>
+          <Text>Don’t have an account?</Text>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Text style={styles.signupText}> Login</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </>
+      <TouchableOpacity
+        onPress={() => navigation.goBack()}
+        style={{ position: 'absolute', top: 60, left: 20 }}
+      >
+        <Image
+          source={require('../assets/back.png')}
+          style={{ width: 30, height: 30 }}
+        />
+      </TouchableOpacity>
+    </KeyboardAwareScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
   container: {
     flex: 1,
     padding: 60,
     alignItems: 'center',
-    backgroundColor: '#e4eaff',
+    backgroundColor: colors.background,
   },
-  logo: {
+  Image2: {
     marginTop: 100,
     width: 150,
     height: 150,
@@ -111,27 +194,53 @@ const styles = StyleSheet.create({
     backgroundColor: 'lightgrey',
     borderRadius: 15,
     padding: 10,
-    marginTop: 10,
+    marginTop:10,
   },
-  signupButton: {
+  errorInput: {
+    width: 300,
+    height: 50,
+    backgroundColor: 'lightgrey',
+    borderRadius: 15,
+    padding: 10,
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: colors.danger,
+  },
+  loginButton: {
     marginTop: 30,
-    backgroundColor: '#007bff',
-    borderRadius: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 40,
+    backgroundColor: colors.primary,
+    borderRadius: 10,
+    paddingVertical: 10,
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 3,
+    flexDirection: 'row',
+    width: 150,
+    height: 45,
   },
-  signupButtonText: {
+  loginButtonText: {
     color: 'white',
     fontSize: 16,
     fontWeight: '600',
+    marginRight: 10,
   },
-  loginLink: {
-    marginTop: 20,
-    color: '#28a745',
+  signupText: {
+    color: colors.primary,
     fontSize: 14,
+    fontWeight: '600',
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: 300,
+    height: 50,
+    backgroundColor: 'lightgrey',
+    borderRadius: 15,
+    paddingHorizontal: 10,
+    marginTop: 10,
+  },
+  eyeIcon: {
+    paddingHorizontal: 8,
   },
 });
 

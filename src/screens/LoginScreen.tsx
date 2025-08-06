@@ -20,6 +20,8 @@ import { NavigationProps } from '../types';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { colors } from '../utility/constants';
 import { saveLoginSession } from '../utility';
+import { alert } from '../../App';
+import { DropdownAlertType } from 'react-native-dropdownalert';
 
 function LoginScreen() {
   const navigation = useNavigation<NavigationProps>();
@@ -61,12 +63,22 @@ function LoginScreen() {
       const uid = data?.user?._user?.uid || '';
       await saveLoginSession(uid);
       setIsLoading(false);
-
       navigation.navigate('LocationScreen');
+      await alert({
+        type: DropdownAlertType.Success,
+        title: 'Success!',
+        message: 'Logged in successfully',
+        interval: 5000
+      });
+
       // navigation.replace('Home'); // Navigate to Home after login
     } catch (error: any) {
       console.log('Login Error:', error.message);
-      Alert.alert('Login Failed', error.message);
+      await alert({
+        type: DropdownAlertType.Error,
+        title: 'Error',
+        message: error.message,
+      });
       setIsLoading(false);
     }
   };
@@ -106,12 +118,14 @@ function LoginScreen() {
 
         <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
           <Text style={styles.loginButtonText}>Login</Text>
-          {isLoading && <ActivityIndicator size={'small'} color={'white'}/>}
+          {isLoading && <ActivityIndicator size={'small'} color={'white'} />}
         </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-          <Text style={styles.signupText}>Don’t have an account? Sign up</Text>
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', marginTop: 20 }}>
+          <Text>Don’t have an account?</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+            <Text style={styles.signupText}> Sign up</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </KeyboardAwareScrollView>
   );
@@ -161,16 +175,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     elevation: 3,
     flexDirection: 'row',
-    width: 200,
+    width: 150,
+    height: 45,
   },
   loginButtonText: {
     color: 'white',
     fontSize: 16,
     fontWeight: '600',
-    marginRight: 10
+    marginRight: 10,
   },
   signupText: {
-    marginTop: 20,
     color: colors.primary,
     fontSize: 14,
     fontWeight: '600',
